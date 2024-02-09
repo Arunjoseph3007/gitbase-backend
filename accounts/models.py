@@ -11,7 +11,7 @@ class MyUser(AbstractUser):
     bio         = models.TextField(null=True, blank=True)
     dob         = models.DateField(null=True, blank=True)
     email       = models.EmailField(unique=True)
-    profile_pic = models.ImageField(upload_to='images/',null=True,blank=True) 
+    profile_pic = models.ImageField(upload_to='images/',default='default.png') 
     is_creator  = models.BooleanField(default=False)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
