@@ -22,7 +22,7 @@ class RegistrationView(APIView):
             email_body = 'Hi ' + user.username + ' Use link below to verify your email \n' + absurl 
             email_subject="Verification Email"
             user.email_user(email_subject,email_body)
-            return Response({"status":"created","data":serializer.data},status=status.HTTP_201_CREATED)
+            return Response({"status":"created"},status=status.HTTP_201_CREATED)
 
 class LoginView(APIView):
     def post(self,request):
