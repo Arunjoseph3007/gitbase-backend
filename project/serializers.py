@@ -9,7 +9,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         return count
     repos_count=serializers.SerializerMethodField('get_repos_count')
     def get_repos_count(self,obj):
-        count=Repository.objects.fiter(project_id=obj.id).count()
+        count=Repository.objects.filter(project_id=obj.id).count()
         return count
     class Meta:
         model=Project
