@@ -57,6 +57,12 @@ class verifyEmail(APIView):
 class ChangePasswordView(APIView):
     def post(self,request):
         token = request.GET.get('token')
+        user = MyUser.objects.get(auth_token = token)
+        if user.is_active == False:
+            user.is_active = True
+            user.save()
+            Token.objects.get(user = user).delete()
+            Token.objects.create(user = user)
         serializer=ChangePasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         valid_data=serializer.data
