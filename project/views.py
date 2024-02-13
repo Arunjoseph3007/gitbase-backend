@@ -27,10 +27,11 @@ class AdminProjectsUpdateView(APIView):
     def put(self,request,pk):
         if request.user.is_authenticated:
             if request.user.is_creator:
+                project_description=request.POST.get('project_description')
                 project=Project.objects.get(id=pk)
-                serializer=ProjectCreateSerializer(project,data=request.data)
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
+                project.project_description=project_description
+                project.save()
+                serializer=ProjectCreateSerializer(project)
                 return Response(serializer.data)
         return Response({"error":"User not authorized"})    
     
