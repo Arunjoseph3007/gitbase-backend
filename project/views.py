@@ -1,13 +1,43 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializers import ProjectSerializer
+from .serializers import ProjectListSerializer,ProjectCreateSerializer
 from .models import Project
 from rest_framework.response import Response
 # Create your views here.
-class AdminProjectsView(APIView):
+class AdminProjectsCreateView(APIView):
     def get(self,request):
-        if request.user.is_creator:
-            projects=Project.objects.all()
-            serializer=ProjectSerializer(projects,many=True)
-            return Response(serializer.data)
+        if request.user.is_authenticated:
+            if request.user.is_creator:
+                projects=Project.objects.all()
+                serializer=ProjectListSerializer(projects,many=True)
+                return Response(serializer.data)
         return Response({"error":"User not authorized"})
+
+    def post(self,request):
+        if request.user.is_authenticated:
+            if request.user.is_creator:
+                user=request.user
+                serializer=ProjectCreateSerializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save(created_by=user)
+                return Response(serializer.data)
+        return Response({"error":"User not authorized"})
+
+class AdminProjectsUpdateView(APIView):
+    def put(self,request,pk):
+        if request.user.is_authenticated:
+            if request.user.is_creator:
+                project=Project.objects.get(id=pk)
+                serializer=ProjectCreateSerializer(project,data=request.data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response(serializer.data)
+        return Response({"error":"User not authorized"})    
+    
+    def delete(self,request,pk):
+        if request.user.is_authenticated:
+            if request.user.is_creator:
+                Project.objects.get(id=pk).delete()   
+                return Response({"status":"Project deleted"})
+        return Response({"error":"User not authorized"}) 
+

@@ -2,7 +2,7 @@ from django.db import models
 from accounts.models import MyUser
 # Create your models here.
 class Project(models.Model):
-    project_name = models.CharField(max_length=200)
+    project_name = models.CharField(max_length=200,unique=True)
     created_by = models.ForeignKey(MyUser,on_delete=models.SET_NULL,blank=True, null=True)
     project_description = models.TextField(blank=True,null=True)
     created_at=models.DateTimeField(auto_now_add=True)

@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import AdminProjectsView
+from .views import AdminProjectsCreateView,AdminProjectsUpdateView
 urlpatterns = [
-    path('adminProject',AdminProjectsView.as_view())
+    path('adminProject',AdminProjectsCreateView.as_view()),
+    path('adminProjectUpdate/<int:pk>',AdminProjectsUpdateView.as_view())
 ]
