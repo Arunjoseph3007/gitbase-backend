@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from .serializers import RegistrationSerializer,LoginSerializer,ChangePasswordSerializer
+from .serializers import RegistrationSerializer,LoginSerializer,AdminListUserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -24,7 +24,14 @@ class RegistrationView(APIView):
                 email_subject="Verification Email"
                 user.email_user(email_subject,email_body)
                 return Response({"status":"created"},status=status.HTTP_201_CREATED)
-            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)       
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)  
+    
+    def get(self,request):     
+        if request.user.is_authenticated:
+            if request.user.is_creator:
+                users=MyUser.objects.all()
+                serializer=AdminListUserSerializer(users,many=True)
+                return Response(serializer.data)
 
 class LoginView(APIView):
     def post(self,request):
@@ -49,3 +56,4 @@ class ChangePasswordView(APIView):
         update_session_auth_hash(request, user)
         return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
 
+        

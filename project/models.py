@@ -11,5 +11,7 @@ class Project(models.Model):
 
 class ProjectAccess(models.Model):
     project_id=models.ForeignKey(Project, on_delete=models.CASCADE)
-    user_id=models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user_id=models.ForeignKey(MyUser, on_delete=models.CASCADE,related_name='users')
     is_manager=models.BooleanField(default=False)
+    def __str__(self):
+        return (f"{self.project_id.project_name} {self.user_id.username}")

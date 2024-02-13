@@ -26,5 +26,8 @@ class LoginSerializer(serializers.Serializer):
             raise AuthenticationFailed('Account disabled, contact admin')
         return {'email': user.email}
         
-class ChangePasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField(required=True)
+
+class AdminListUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=MyUser
+        fields=['username','first_name','last_name','email','is_creator','is_manager','profile_pic']
