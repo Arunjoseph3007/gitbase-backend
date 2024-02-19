@@ -20,7 +20,8 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/',include('accounts.urls')),
-    path('project/',include('project.urls'))
+    path('project/',include('project.urls')),
+    path('repository/',include('repository.urls'))
 ]
 
 from django.conf import settings

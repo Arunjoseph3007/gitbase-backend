@@ -5,6 +5,7 @@ from accounts.models import MyUser
 
 class Repository(models.Model):
     repo_name=models.CharField(max_length=200,null=True,blank=True)
+    repo_description=models.TextField(null=True,blank=True)
     project_id=models.ForeignKey(Project,on_delete=models.CASCADE)
     created_by=models.ForeignKey(MyUser, on_delete=models.SET_NULL,blank=True, null=True)
     created_at=models.DateTimeField(auto_now_add=True)
