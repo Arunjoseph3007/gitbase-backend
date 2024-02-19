@@ -13,7 +13,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
         return count
     class Meta:
         model=Project
-        fields=['project_name','project_description','created_at','members_count','repos_count']
+        fields=['id','project_name','project_description','created_at','members_count','repos_count']
 
 class ProjectCreateSerializer(serializers.ModelSerializer):
     class Meta:

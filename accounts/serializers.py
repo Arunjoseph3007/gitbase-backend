@@ -30,4 +30,4 @@ class LoginSerializer(serializers.Serializer):
 class AdminListUserSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
-        fields=['username','first_name','last_name','email','is_creator','is_manager','profile_pic']
+        fields=['username','first_name','last_name','email','is_creator','is_manager','profile_pic','date_joined']

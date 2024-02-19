@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .serializers import ProjectListSerializer,ProjectCreateSerializer
-from .models import Project
+from .models import Project,ProjectAccess
 from rest_framework.response import Response
 # Create your views here.
 class AdminProjectsCreateView(APIView):
@@ -42,3 +42,13 @@ class AdminProjectsUpdateView(APIView):
                 return Response({"status":"Project deleted"})
         return Response({"error":"User not authorized"}) 
 
+class UserProjectsListView(APIView):
+    def get(self,request):
+        if request.user.is_authenticated:
+            projects=[]
+            projectAccess=ProjectAccess.objects.filter(user_id=request.user)
+            for project in projectAccess:
+                projects.append(Project.objects.get(id=project.project_id.id))
+            serializer=ProjectListSerializer(projects,many=True)
+            return Response(serializer.data)
+        return Response({"error":"User not authorized"})
