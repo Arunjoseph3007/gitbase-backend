@@ -1,10 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+import project
 # Create your models here.
 
 class MyUser(AbstractUser):
@@ -27,6 +27,12 @@ class MyUser(AbstractUser):
             return False
         else:
             return True   
+    
+    @property
+    def current_project(self):
+        projects=project.models.ProjectAccess.objects.filter(user_id=self).order_by('-created_at')
+        if projects:
+            return projects[0].project_id.project_name
 
     @receiver(post_save, sender = settings.AUTH_USER_MODEL)
     def create_auth_token(sender, instance = None, created = False, **kwargs):
