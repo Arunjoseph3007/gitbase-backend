@@ -29,7 +29,7 @@ class RegistrationView(APIView):
     def get(self,request):     
         if request.user.is_authenticated:
             if request.user.is_creator:
-                users=MyUser.objects.all()
+                users=MyUser.objects.all().exclude(is_superuser=True)
                 serializer=AdminListUserSerializer(users,many=True)
                 return Response(serializer.data)
 
