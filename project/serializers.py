@@ -27,7 +27,6 @@ class UserDetailSerializer(serializers.ModelSerializer):
         fields=['id','username','profile_pic','first_name','last_name','email']
 
 class ProjectAccessSerializer(serializers.ModelSerializer):
-    project_id=ProjectListSerializer()
     user_id=UserDetailSerializer()
     class Meta:
         model=ProjectAccess
