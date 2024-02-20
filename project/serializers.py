@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Project,ProjectAccess
 from repository.models import Repository
+from accounts.models import MyUser
 
 class ProjectListSerializer(serializers.ModelSerializer):
     members_count=serializers.SerializerMethodField('get_members_count')
@@ -19,3 +20,15 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model=Project
         fields=['project_name','project_description']
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=MyUser
+        fields=['id','username','profile_pic','first_name','last_name','email']
+
+class ProjectAccessSerializer(serializers.ModelSerializer):
+    project_id=ProjectListSerializer()
+    user_id=UserDetailSerializer()
+    class Meta:
+        model=ProjectAccess
+        fields="__all__"
