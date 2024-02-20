@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from .serializers import RegistrationSerializer,LoginSerializer,AdminListUserSerializer
+from .serializers import RegistrationSerializer,LoginSerializer,AdminListUserSerializer,UserSearchSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -57,3 +57,11 @@ class ChangePasswordView(APIView):
         return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
 
         
+class UserSearchView(APIView):
+    def get(self,request):
+        if request.user.is_authenticated:
+            keyword=self.request.GET.get('keyword')
+            query=MyUser.objects.filter(username__icontains=keyword).exclude(is_superuser=True)
+            serializer=UserSearchSerializer(query,many=True)
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)  

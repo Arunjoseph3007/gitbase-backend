@@ -31,3 +31,8 @@ class AdminListUserSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
         fields=['username','first_name','last_name','email','is_creator','is_manager','profile_pic','date_joined','current_project']
+
+class UserSearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=MyUser
+        fields=['id','username','profile_pic','first_name','last_name','email']
