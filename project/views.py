@@ -20,7 +20,8 @@ class AdminProjectsCreateView(APIView):
                 user=request.user
                 serializer=ProjectCreateSerializer(data=request.data)
                 serializer.is_valid(raise_exception=True)
-                serializer.save(created_by=user)
+                projectInstance=serializer.save(created_by=user)
+                ProjectAccess.objects.create(project_id=projectInstance,user_id=user,is_manager=True)
                 return Response(serializer.data)
         return Response({"error":"User not authorized"})
 
@@ -128,3 +129,18 @@ class UserProjectDetailView(APIView):
             serializer=ProjectListSerializer(project)
             return Response(serializer.data)
         return Response({"error":"User not authorized"}) 
+    
+class UserProjectAccess(APIView):
+    def get(self,request):
+        username=request.GET.get('username')
+        if request.user.username!=username:
+            return Response({"error":"User not authorized"}) 
+        user=MyUser.objects.get(username=username)
+        accesses=ProjectAccess.objects.filter(user_id=user)
+        response=[]
+        for access in accesses:
+            response.append(access.project_id)
+        serializer=ProjectListSerializer(response,many=True)
+        return Response(serializer.data)
+
+        

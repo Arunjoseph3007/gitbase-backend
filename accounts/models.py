@@ -20,8 +20,6 @@ class MyUser(AbstractUser):
     
     @property
     def is_manager(self):
-        if self.is_creator:
-            return True
         query=self.users.filter(is_manager=True)
         if not query:
             return False

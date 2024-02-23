@@ -25,7 +25,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
 class ProjectCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model=Project
-        fields=['project_name','project_description']
+        fields=['id','project_name','project_description']
 
 class ProjectAccessSerializer(serializers.ModelSerializer):
     user_id=UserDetailSerializer()
