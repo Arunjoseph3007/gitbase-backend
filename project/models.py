@@ -17,3 +17,9 @@ class ProjectAccess(models.Model):
     created_at=models.DateTimeField( default=timezone.now)
     def __str__(self):
         return (f"{self.project_id.project_name} {self.user_id.username}")
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user_id', 'project_id'], name='user_id&project_id'
+            )
+        ]
