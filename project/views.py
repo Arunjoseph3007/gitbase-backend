@@ -54,6 +54,9 @@ class UserProjectsListView(APIView):
             return Response(serializer.data)
         return Response({"error":"User not authorized"})
 
+def str2bool(str):
+    return True if str=="true" else False
+
 class AdminProvideProjectAccess(APIView):
     def post(self,request):
         if request.user.is_authenticated:
@@ -65,9 +68,9 @@ class AdminProvideProjectAccess(APIView):
             except:
                 return Response({"error":"User not authorized"})
             user_id=request.POST.get('user_id')
-            is_manager=request.POST.get('is_manager')
+            is_manager=str2bool(request.POST.get('is_manager'))
             user=MyUser.objects.get(id=user_id)
-            if is_manager=="True":
+            if is_manager:
                 ProjectAccess.objects.create(user_id=user,project_id=project,is_manager=True)
             else:
                 ProjectAccess.objects.create(user_id=user,project_id=project)
@@ -105,8 +108,8 @@ class AdminRemoveProjectAccess(APIView):
                 project=ProjectAccess.objects.get(project_id=projectAccess.project_id,user_id=request.user,is_manager=True)
             except:
                 return Response({"error":"Project not found"})
-            is_manager=request.POST.get('is_manager')
-            if is_manager=="True":
+            is_manager=str2bool(request.POST.get('is_manager'))
+            if is_manager:
                 projectAccess.is_manager=True
             else:
                 projectAccess.is_manager=False
