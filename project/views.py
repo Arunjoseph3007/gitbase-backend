@@ -4,6 +4,9 @@ from .serializers import ProjectListSerializer,ProjectCreateSerializer,ProjectAc
 from .models import Project,ProjectAccess
 from accounts.models import MyUser
 from rest_framework.response import Response
+from repository.models import Repository
+from repository.serializers import RepositorySerializer
+from rest_framework import status
 # Create your views here.
 class AdminProjectsCreateView(APIView):
     def get(self,request):
@@ -12,7 +15,7 @@ class AdminProjectsCreateView(APIView):
                 projects=Project.objects.all()
                 serializer=ProjectListSerializer(projects,many=True)
                 return Response(serializer.data)
-        return Response({"error":"User not authorized"})
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
 
     def post(self,request):
         if request.user.is_authenticated:
@@ -23,7 +26,7 @@ class AdminProjectsCreateView(APIView):
                 projectInstance=serializer.save(created_by=user)
                 ProjectAccess.objects.create(project_id=projectInstance,user_id=user,is_manager=True)
                 return Response(serializer.data)
-        return Response({"error":"User not authorized"})
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
 
 class AdminProjectsUpdateView(APIView): 
     def put(self,request,pk):
@@ -35,14 +38,14 @@ class AdminProjectsUpdateView(APIView):
                 project.save()
                 serializer=ProjectCreateSerializer(project)
                 return Response(serializer.data)
-        return Response({"error":"User not authorized"})    
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)    
     
     def delete(self,request,pk):
         if request.user.is_authenticated:
             if request.user.is_creator:
                 Project.objects.get(id=pk).delete()   
                 return Response({"status":"Project deleted"})
-        return Response({"error":"User not authorized"}) 
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED) 
 
 class UserProjectsListView(APIView):
     def get(self,request):
@@ -53,7 +56,7 @@ class UserProjectsListView(APIView):
                 projects.append(Project.objects.get(id=project.project_id.id))
             serializer=ProjectListSerializer(projects,many=True)
             return Response(serializer.data)
-        return Response({"error":"User not authorized"})
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
 
 def str2bool(str):
     return True if str=="true" else False
@@ -76,7 +79,7 @@ class AdminProvideProjectAccess(APIView):
             else:
                 ProjectAccess.objects.create(user_id=user,project_id=project)
             return Response({"status":"Access granted"})
-        return Response({"error":"User not authorized"})
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
 
     def get(self,request):
         if request.user.is_authenticated:
@@ -88,7 +91,7 @@ class AdminProvideProjectAccess(APIView):
             query=ProjectAccess.objects.filter(project_id=project)
             serializer=ProjectAccessSerializer(query,many=True)
             return Response(serializer.data)
-        return Response({"error":"User not authorized"})
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
     
 class AdminRemoveProjectAccess(APIView):
     def delete(self,request,pk):
@@ -100,7 +103,7 @@ class AdminRemoveProjectAccess(APIView):
                 return Response({"error":"Project not found"})
             projectAccess.delete()
             return Response({"status":"Access revoked"})
-        return Response({"error":"User not authorized"})
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
     
     def put(self,request,pk):
         if request.user.is_authenticated:
@@ -116,7 +119,7 @@ class AdminRemoveProjectAccess(APIView):
                 projectAccess.is_manager=False
             projectAccess.save()
             return Response({"status":"Access updated"})
-        return Response({"error":"User not authorized"})
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
     
 class UserProjectDetailView(APIView):
     def get(self,request):
@@ -128,13 +131,15 @@ class UserProjectDetailView(APIView):
                 return Response({"status":"Project not found"})
             serializer=ProjectListSerializer(project)
             return Response(serializer.data)
-        return Response({"error":"User not authorized"}) 
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED) 
     
 class UserProjectAccess(APIView):
     def get(self,request):
+        if not request.user.is_authenticated:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        if not request.user.is_creator:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED) 
         username=request.GET.get('username')
-        if request.user.username!=username:
-            return Response({"error":"User not authorized"}) 
         user=MyUser.objects.get(username=username)
         accesses=ProjectAccess.objects.filter(user_id=user)
         response=[]
@@ -142,5 +147,20 @@ class UserProjectAccess(APIView):
             response.append(access.project_id)
         serializer=ProjectListSerializer(response,many=True)
         return Response(serializer.data)
+
+class ProjectRepositoryView(APIView):
+    def get(self,request):
+        if not request.user.is_authenticated:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        project_name=request.GET.get('project_name')
+        project=Project.objects.get(project_name=project_name)
+        try:
+            projectAccess=ProjectAccess.objects.get(user_id=request.user,project_id=project)
+        except:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        repositoryList=Repository.objects.filter(project_id=project)
+        serializer=RepositorySerializer(repositoryList,many=True)
+        return Response(serializer.data)
+
 
         

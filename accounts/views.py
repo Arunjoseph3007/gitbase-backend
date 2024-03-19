@@ -1,11 +1,13 @@
 from rest_framework.views import APIView
-from .serializers import RegistrationSerializer,LoginSerializer,AdminListUserSerializer,UserSearchSerializer
+from .serializers import RegistrationSerializer,LoginSerializer,AdminListUserSerializer,UserSearchSerializer,UserDetailSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import update_session_auth_hash
 from .models import MyUser
 from django.urls import reverse
+from repository.models import RepositoryContributor
+from project.models import ProjectAccess
 # from django.contrib.sites.models import Site
 # Create your views here.
 
@@ -32,6 +34,7 @@ class RegistrationView(APIView):
                 users=MyUser.objects.all().exclude(is_superuser=True)
                 serializer=AdminListUserSerializer(users,many=True)
                 return Response(serializer.data)
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)  
 
 class LoginView(APIView):
     def post(self,request):
@@ -65,3 +68,13 @@ class UserSearchView(APIView):
             serializer=UserSearchSerializer(query,many=True)
             return Response(serializer.data,status=status.HTTP_200_OK)
         return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)  
+
+class UserDetailView(APIView):
+    def get(self,request,pk):
+        if request.user.is_creator:
+            user=MyUser.objects.get(id=pk)
+            userSerializer=UserDetailSerializer(user)
+            return Response(userSerializer.data)
+        return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)  
+
+            

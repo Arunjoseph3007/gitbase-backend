@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import MyUser
+from repository.models import Repository, RepositoryContributor
+from project.models import Project
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 
@@ -30,9 +32,17 @@ class LoginSerializer(serializers.Serializer):
 class AdminListUserSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
-        fields=['username','first_name','last_name','email','is_creator','is_manager','profile_pic','date_joined','current_project']
+        fields=['id','username','first_name','last_name','email','is_creator','is_manager','profile_pic','date_joined','current_project']
 
 class UserSearchSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
         fields=['id','username','profile_pic','first_name','last_name','email']
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=MyUser
+        fields=['id','username','first_name','last_name','email','is_creator','is_manager','profile_pic','date_joined','current_project']
+
+
+
