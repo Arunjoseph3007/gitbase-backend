@@ -35,6 +35,17 @@ class RegistrationView(APIView):
                 serializer=AdminListUserSerializer(users,many=True)
                 return Response(serializer.data)
         return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)  
+    
+    def delete(self,request):
+        if not request.user.is_authenticated:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED) 
+        if not request.user.is_creator:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED) 
+        username=request.GET.get('username')
+        user=MyUser.objects.get(username=username)
+        user.is_active=False
+        user.save()
+        return Response({"status":"User deactivated"})
 
 class LoginView(APIView):
     def post(self,request):
