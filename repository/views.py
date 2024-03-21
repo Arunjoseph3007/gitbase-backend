@@ -34,7 +34,42 @@ class UserRepositoryView(APIView):
         returnData['user_name']=request.user.username
         return Response(returnData, status=status.HTTP_201_CREATED)
 
-    
+class RepositoryDetailView(APIView):
+    def get(self, request, pk):
+        if not request.user.is_authenticated:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        repository=Repository.objects.get(id=pk)
+        try:
+            projectAccess=ProjectAccess.objects.get(user_id=request.user,project_id=repository.project_id)
+        except:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        serializer = RepositorySerializer(repository)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        if not request.user.is_authenticated:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        repository=Repository.objects.get(id=pk)
+        try:
+            repositoryContributor=RepositoryContributor.objects.get(user_id=request.user,repo_id=repository)
+        except:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        serializer = RepositoryCreateSerializer(repository, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        if not request.user.is_authenticated:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        repository=Repository.objects.get(id=pk)
+        try:
+            projectAccess=ProjectAccess.objects.get(user_id=request.user,project_id=repository.project_id,is_manager=True)
+        except:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        # call(['rm', '-rf', f'/var/www/git/{self.request.user.username}/{repository}.git'])
+        repository.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)   
 
 class UserProfileRepository(APIView):
     def get(self,request):

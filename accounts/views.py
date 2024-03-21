@@ -31,7 +31,7 @@ class RegistrationView(APIView):
     def get(self,request):     
         if request.user.is_authenticated:
             if request.user.is_creator:
-                users=MyUser.objects.all().exclude(is_superuser=True)
+                users=MyUser.objects.filter(is_active=True).exclude(is_superuser=True)
                 serializer=AdminListUserSerializer(users,many=True)
                 return Response(serializer.data)
         return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)  
