@@ -29,7 +29,7 @@ class UserRepositoryView(APIView):
         if not is_manager:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
         serializer.save(created_by=request.user)
-        call(['git-create-repo.sh', request.data['repo_name'], self.request.user.username])
+        # call(['git-create-repo.sh', request.data['repo_name'], self.request.user.username])
         returnData=serializer.data
         returnData['user_name']=request.user.username
         return Response(returnData, status=status.HTTP_201_CREATED)
