@@ -24,3 +24,8 @@ class RepositorySerializer(serializers.ModelSerializer):
         model=Repository
         fields="__all__"
 
+class RepositoryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Repository
+        fields=("repo_name","repo_description","project_id")
+
