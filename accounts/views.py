@@ -53,7 +53,7 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         user=MyUser.objects.get(email=serializer.validated_data['email'])
         token=Token.objects.get(user=user)
-        return Response(token.key,status=status.HTTP_200_OK)
+        return Response({"token":token.key,"id":user.id},status=status.HTTP_200_OK)
 
 class ChangePasswordView(APIView):
     def post(self,request):
@@ -88,4 +88,16 @@ class UserDetailView(APIView):
             return Response(userSerializer.data)
         return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)  
 
-            
+class MyUserView(APIView):
+    def get(self,request):
+        query=request.user   
+        print(query)     
+        serializer=UserDetailSerializer(query)       
+        return Response(serializer.data)
+    def patch(self, request):
+        query = request.user
+        serializer = UserDetailSerializer(query, data=request.data,partial=True)            
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
