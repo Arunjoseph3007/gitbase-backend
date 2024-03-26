@@ -27,8 +27,18 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
         model=Project
         fields=['id','project_name','project_description']
 
-class ProjectAccessSerializer(serializers.ModelSerializer):
+class GetProjectAccessSerializer(serializers.ModelSerializer):
     user_id=UserDetailSerializer()
     class Meta:
         model=ProjectAccess
         fields="__all__"
+
+class PostProjectAccessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=ProjectAccess
+        fields="__all__"
+
+class UpdateProjectAccessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=ProjectAccess
+        fields=("is_manager",)
