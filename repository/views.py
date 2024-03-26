@@ -133,6 +133,7 @@ class GetUserRepos(APIView):
     def get(self,request):
         if not request.user.is_authenticated:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        print("Here")
         username=request.GET.get('username')  
         user=MyUser.objects.get(username=username)
         queryset=RepositoryContributor.objects.filter(user_id=user)
@@ -149,10 +150,12 @@ class GetUserRepos(APIView):
                 response.append(repo)
         repo_serializer=GetUserRepositorySerializer(response,many=True)    
         user_serializer = MyUserSerializer(user) 
+        print(user_serializer)
         responseData = {
             'UserDetails': user_serializer.data,
             'RepoDetails': repo_serializer.data,
         }
+        print(responseData)
         return Response(responseData)
          
         
