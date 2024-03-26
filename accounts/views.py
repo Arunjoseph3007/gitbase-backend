@@ -59,7 +59,8 @@ class ChangePasswordView(APIView):
     def post(self,request):
         token = request.GET.get('token')
         new_password = request.POST.get('new_password')
-        user = MyUser.objects.get(auth_token = token)
+        print(token,new_password)
+        # user = MyUser.objects.get(auth_token = token)
         user=Token.objects.get(key=token).user
         user.set_password(new_password)
         if user.is_active == False:

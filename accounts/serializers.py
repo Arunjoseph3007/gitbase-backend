@@ -21,7 +21,9 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, attrs):
         email = attrs.get('email', '')
         password = attrs.get('password', '')
+        print(email,password)
         user = authenticate(email=email, password=password)
+        print(user)
         if not user:
             raise AuthenticationFailed('Invalid credentials, try again')
         if not user.is_active:
@@ -42,7 +44,7 @@ class UserSearchSerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
-        fields=['id','username','first_name','last_name','email','is_creator','is_manager','profile_pic','date_joined','current_project']
+        fields=['id','username','first_name','last_name','email','is_creator','is_manager','profile_pic','date_joined','current_project','bio','dob']
 
 
 
