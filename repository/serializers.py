@@ -48,9 +48,15 @@ class GetContributorSerializer(serializers.ModelSerializer):
         fields="__all__"
 
 class GetUserRepositorySerializer(serializers.ModelSerializer):
+    created_by=MyUserSerializer()
+    project_id=ProjectNameSerializer()
     stars=serializers.SerializerMethodField('get_stars_count')
     def get_stars_count(self,obj):
         count=Star_Repo.objects.filter(star_repo=obj).count()
+        return count
+    contributors_count=serializers.SerializerMethodField('get_contributors_count')
+    def get_contributors_count(self,obj):
+        count=RepositoryContributor.objects.filter(repo_id=obj.id).count()
         return count
     class Meta:
         model=Repository

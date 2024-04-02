@@ -7,6 +7,7 @@ from rest_framework import status
 from accounts.models import MyUser
 from project.models import Project,ProjectAccess
 from subprocess import call
+from project.serializers import ProjectListSerializer
 # Create your views here.
 class UserRepositoryView(APIView):
     def get(self,request):
@@ -152,10 +153,12 @@ class GetUserRepos(APIView):
                 response.append(repo)
         repo_serializer=GetUserRepositorySerializer(response,many=True)    
         user_serializer = MyUserSerializer(user) 
+        project_serializer=ProjectListSerializer(projectList,many=True)
         print(user_serializer)
         responseData = {
             'UserDetails': user_serializer.data,
             'RepoDetails': repo_serializer.data,
+            'ProjectDetails':project_serializer.data
         }
         print(responseData)
         return Response(responseData)
