@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserRepositoryView,RepositoryDetailView,AddContributorView,ContributorDetailView,GetUserRepos,RepoSearch,StarRepoView,StarRepoDetail
+from .views import UserRepositoryView,RepositoryDetailView,AddContributorView,ContributorDetailView,GetUserRepos,RepoSearch,StarRepoView,StarRepoDetail,RecentContributionView
 
 urlpatterns = [
     path('userRepos',UserRepositoryView.as_view()),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('repoSearch',RepoSearch.as_view()),
     path('star-repo',StarRepoView.as_view()),
     path('star-repo-detail',StarRepoDetail.as_view()),
+    path('recentContributions',RecentContributionView.as_view())
 ]

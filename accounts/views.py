@@ -76,7 +76,7 @@ class UserSearchView(APIView):
     def get(self,request):
         if request.user.is_authenticated:
             keyword=self.request.GET.get('keyword')
-            query=MyUser.objects.filter(username__icontains=keyword).exclude(is_superuser=True)
+            query=MyUser.objects.filter(username__icontains=keyword,is_active=True).exclude(is_superuser=True)
             serializer=UserSearchSerializer(query,many=True)
             return Response(serializer.data,status=status.HTTP_200_OK)
         return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)  

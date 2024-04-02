@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Repository,RepositoryContributor,Star_Repo
 from accounts.models import MyUser
 from project.models import Project
+from project.serializers import ProjectListSerializer
 
 class RepositoryCreatorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,3 +59,14 @@ class StarRepoSerializer(serializers.ModelSerializer):
     class Meta:
         model=Star_Repo
         fields="__all__"
+
+class RecentContributionSerializer(serializers.ModelSerializer):
+    project_id=ProjectListSerializer()
+    contributors_count=serializers.SerializerMethodField('get_contributors_count')
+    def get_contributors_count(self,obj):
+        count=RepositoryContributor.objects.filter(repo_id=obj.id).count()
+        return count
+    created_by = MyUserSerializer()
+    class Meta:
+        model=Repository
+        fields=["id","repo_name","repo_description","created_by","created_at","project_id","contributors_count"]

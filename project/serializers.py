@@ -34,9 +34,10 @@ class GetProjectAccessSerializer(serializers.ModelSerializer):
         fields="__all__"
 
 class PostProjectAccessSerializer(serializers.ModelSerializer):
+    project_name=serializers.CharField(max_length=200)
     class Meta:
         model=ProjectAccess
-        fields="__all__"
+        fields=["project_name","user_id","is_manager"]
 
 class UpdateProjectAccessSerializer(serializers.ModelSerializer):
     class Meta:

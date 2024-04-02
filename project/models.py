@@ -11,7 +11,7 @@ class Project(models.Model):
         return self.project_name
 
 class ProjectAccess(models.Model):
-    project_id=models.ForeignKey(Project, on_delete=models.CASCADE)
+    project_id=models.ForeignKey(Project, on_delete=models.CASCADE,blank=True)
     user_id=models.ForeignKey(MyUser, on_delete=models.CASCADE,related_name='users')
     is_manager=models.BooleanField(default=False)
     created_at=models.DateTimeField( default=timezone.now)

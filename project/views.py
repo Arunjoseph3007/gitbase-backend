@@ -74,10 +74,10 @@ class AdminProvideProjectAccess(APIView):
         serializer=PostProjectAccessSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data=serializer.validated_data
-        project=Project.objects.get(project_name=data["project_id"])
+        project=Project.objects.get(project_name=data["project_name"])
         if not project.created_by==request.user:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)         
-        serializer.save()
+        ProjectAccess.objects.create(user_id=data["user_id"],project_id=project,is_manager=data["is_manager"])
         return Response({"status":"Access granted"})
 
     def get(self,request):
@@ -155,6 +155,7 @@ class ProjectRepositoryView(APIView):
         repositoryList=Repository.objects.filter(project_id=project)
         serializer=RepositorySerializer(repositoryList,many=True)
         return Response(serializer.data)
+
 
 
         

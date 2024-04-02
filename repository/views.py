@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import RepositorySerializer,RepositoryCreateSerializer,AddContributorSerializer,GetContributorSerializer,GetUserRepositorySerializer,MyUserSerializer,StarRepoSerializer
+from .serializers import RepositorySerializer,RepositoryCreateSerializer,AddContributorSerializer,GetContributorSerializer,GetUserRepositorySerializer,MyUserSerializer,StarRepoSerializer,RecentContributionSerializer
 from .models import Repository,RepositoryContributor,Star_Repo
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -233,3 +233,14 @@ class UserProfileRepository(APIView):
                 serializer=RepositorySerializer(repos,many=True)
                 return Response(serializer.data)
         return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)          
+
+class RecentContributionView(APIView):
+    def get(self,request):
+        if not request.user.is_authenticated:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
+        query=RepositoryContributor.objects.filter(user_id=request.user)
+        response=[]
+        for contribution in query:
+            response.append(contribution.repo_id)
+        serializer=RecentContributionSerializer(response,many=True)
+        return Response(serializer.data)
