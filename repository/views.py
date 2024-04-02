@@ -24,12 +24,14 @@ class UserRepositoryView(APIView):
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
         serializer = RepositoryCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        project=serializer.validated_data["project_id"]
+        data=serializer.validated_data
+        print(data)
+        project=Project.objects.get(project_name=data["project_name"])
         try:
             ProjectAccess.objects.get(project_id=project,user_id=request.user,is_manager=True)
         except:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
-        serializer.save(created_by=request.user)
+        Repository.objects.create(created_by=request.user,project_id=project,repo_name=data["repo_name"],repo_description=data["repo_description"])
         # call(['git-create-repo.sh', request.data['repo_name'], self.request.user.username])
         returnData=serializer.data
         returnData['user_name']=request.user.username
