@@ -113,7 +113,7 @@ class AdminRemoveProjectAccess(APIView):
         project=projectAccess.project_id
         if not project.created_by==request.user:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED) 
-        serializer=UpdateProjectAccessSerializer(data=request.data)
+        serializer=UpdateProjectAccessSerializer(projectAccess,data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"status":"Access updated"})
