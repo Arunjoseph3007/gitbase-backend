@@ -10,9 +10,9 @@ from rest_framework import status
 # Create your views here.
 class AdminProjectsCreateView(APIView):
     def get(self,request):
-        if request.user.is_authenticated:
+        if not request.user.is_authenticated:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_creator:
+        if not request.user.is_creator:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
         projects=Project.objects.all()
         serializer=ProjectListSerializer(projects,many=True)
