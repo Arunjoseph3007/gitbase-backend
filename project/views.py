@@ -105,7 +105,7 @@ class AdminRemoveProjectAccess(APIView):
         return Response({"status":"Access revoked"})
     
     def put(self,request,pk):
-        if request.user.is_authenticated:
+        if not request.user.is_authenticated:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
         if not request.user.is_creator:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED) 
