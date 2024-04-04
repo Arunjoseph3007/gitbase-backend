@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Repository,RepositoryContributor,Star_Repo
 from accounts.models import MyUser
-from project.models import Project
+from project.models import Project,ProjectAccess
 from project.serializers import ProjectListSerializer
 
 class RepositoryCreatorSerializer(serializers.ModelSerializer):
@@ -45,6 +45,10 @@ class MyUserSerializer(serializers.ModelSerializer):
 
 class GetContributorSerializer(serializers.ModelSerializer):
     user_id = MyUserSerializer()
+    is_manager=serializers.SerializerMethodField('get_manager')
+    def get_manager(self,obj):
+        projectAccess=ProjectAccess.objects.get(project_id=obj.repo_id.project_id,user_id=obj.user_id).is_manager
+        return projectAccess
     class Meta:
         model=RepositoryContributor
         fields="__all__"
