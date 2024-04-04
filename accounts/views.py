@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import update_session_auth_hash
 from .models import MyUser
+from project.models import Project
 from django.urls import reverse
 from repository.models import RepositoryContributor
 from project.models import ProjectAccess
@@ -102,3 +103,22 @@ class MyUserView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+
+class RestrictedUserSearchView(APIView):
+    def get(self,request):
+        if not request.user.is_authenticated:
+            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)  
+        keyword=request.GET.get('keyword')
+        project_name=request.GET.get('project_name')
+        project=Project.objects.get(project_name=project_name)
+        query=MyUser.objects.filter(username__icontains=keyword,is_active=True).exclude(is_superuser=True)
+        response=[]
+        for user in query:
+            try:
+                ProjectAccess.objects.get(project_id=project,user_id=user)
+                response.append(user)
+            except:
+                pass
+        serializer=UserSearchSerializer(response,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
