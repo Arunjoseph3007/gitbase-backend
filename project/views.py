@@ -83,8 +83,8 @@ class AdminProvideProjectAccess(APIView):
     def get(self,request):
         if not request.user.is_authenticated:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
-        if not request.user.is_creator:
-            return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED) 
+        # if not request.user.is_creator:
+        #     return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED) 
         project_name=request.GET.get('project_name')
         project=Project.objects.get(project_name=project_name)
         query=ProjectAccess.objects.filter(project_id=project)
