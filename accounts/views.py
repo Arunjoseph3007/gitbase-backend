@@ -53,7 +53,7 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         user=MyUser.objects.get(email=serializer.validated_data['email'])
         token=Token.objects.get(user=user)
-        return Response({"token":token.key,"id":user.id,"is_admin":user.is_creator},status=status.HTTP_200_OK)
+        return Response({"token":token.key,"id":user.id,"is_admin":user.is_creator,"username":user.username},status=status.HTTP_200_OK)
 
 class ChangePasswordView(APIView):
     def post(self,request):
