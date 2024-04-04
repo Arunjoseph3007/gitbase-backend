@@ -32,6 +32,8 @@ class RepositoryCreateSerializer(serializers.ModelSerializer):
         fields=("repo_name","repo_description","project_name")
 
 class AddContributorSerializer(serializers.ModelSerializer):
+    project_name=serializers.CharField(max_length=200)
+    repo_name=serializers.CharField(max_length=200)
     class Meta:
         model=RepositoryContributor
         fields="__all__"

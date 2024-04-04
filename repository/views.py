@@ -81,7 +81,9 @@ class AddContributorView(APIView):
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
         serializer=AddContributorSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        project=serializer.validated_data["repo_id"].project_id
+        data=serializer.validated_data
+        project=Project.objects.get(project_name=data["project_name"])
+        repository=Repository.objects.get(project_id=project,repo_name=data["repo_name"])
         is_manager=ProjectAccess.objects.get(project_id=project,user_id=request.user).is_manager
         if not is_manager:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
@@ -89,7 +91,7 @@ class AddContributorView(APIView):
             ProjectAccess.objects.get(project_id=project,user_id=serializer.validated_data["user_id"])
         except:
             return Response({"error":"User not authorized"},status=status.HTTP_401_UNAUTHORIZED)
-        serializer.save()
+        RepositoryContributor.objects.create(repo_id=repository,user_id=data["user_id"])
         return Response(serializer.data)
 
     def get(self,request):

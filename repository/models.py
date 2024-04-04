@@ -19,7 +19,7 @@ class Repository(models.Model):
         ]
 
 class RepositoryContributor(models.Model):
-    repo_id=models.ForeignKey(Repository, on_delete=models.CASCADE)
+    repo_id=models.ForeignKey(Repository, on_delete=models.CASCADE,blank=True)
     user_id=models.ForeignKey(MyUser, on_delete=models.CASCADE)
     def __str__(self):
         return str(self.repo_id)
